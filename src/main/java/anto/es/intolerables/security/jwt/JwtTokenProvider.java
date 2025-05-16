@@ -17,7 +17,7 @@ import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
 
-@RequiredArgsConstructor
+
 @Component
 public class JwtTokenProvider {
 //genera el token
@@ -25,11 +25,12 @@ public class JwtTokenProvider {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String TOKEN_TYPE = "JWT";
     private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
+    private final String jwtSecret;
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecret) {
+        this.jwtSecret = jwtSecret;
+    }
 
-    private int jwtExpiration = 86400000;
     private SecretKey getSigningKey() {
         byte[] keyBytes = Base64.getDecoder().decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
