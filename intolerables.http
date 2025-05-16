@@ -1,0 +1,82 @@
+### GET USUARIOS
+GET http://localhost:9000/api/auth/usuarios
+### GET USUARIOBYID
+GET http://localhost:9000/api/auth/usuario/7
+### POST USUARIO LOGIN
+POST http://localhost:9000/api/auth/login
+{
+    "nombre": "anto",
+    "contrasena": "Jose123_"
+}
+
+### POST REGISTER USUARIO
+POST http://localhost:9000/api/auth/register-api
+{
+    "nombre": "nuevoUsuario",
+    "contrasena": "passwordSeguro",
+    "confirmarContrasena": "passwordSeguro",
+    "paisUsuario": "España",
+    "ciudad": "Madrid"
+}
+
+### GET BUSCAR RESTAURANTE POR INTOLERANCIA Y UBI
+GET http://localhost:9000/api/yelp/buscar?intolerancia=Sin Gluten&ubicacion=Madrid&comida=Italiana
+
+### POST FAVORITO RESTAURANTE
+POST http://localhost:9000/api/favoritos-restaurantes
+{
+  "usuario": { "id": 1 },
+  "restaurante": { "id": 2 }
+}
+
+### CREAR RECETA
+POST http://localhost:9000/api/recetas/crear
+{
+  "titulo": "Ensalada Mediterránea",
+  "imagen": "https://ejemplo.com/ensalada.jpg",
+  "duracionReceta": 15,
+  "calorias": 250,
+  "tipoReceta": "Vegetariana",
+  "ingredientes": [
+    {
+      "ingrediente": {
+        "nombre": "Tomate"
+      },
+      "cantidad": 2,
+      "unidad": "unidades"
+    },
+    {
+    "ingredientes": [
+  {
+    "ingrediente": {
+      "id": 1,
+      "nombre": "Tomate"
+    },
+    "cantidad": 2,
+    "unidad": "unidades"
+  },
+  {
+    "ingrediente": {
+      "id": 2,
+      "nombre": "Queso feta"
+    },
+    "cantidad": 100,
+    "unidad": "gramos"
+  }
+],
+      "cantidad": 100,
+      "unidad": "gramos"
+    }
+  ],
+  "analyzedInstructions": [
+    {
+      "numeroPaso": 1,
+      "descripcion": "Lava y corta los tomates."
+    },
+    {
+      "numeroPaso": 2,
+      "descripcion": "Agrega el queso feta encima y sirve."
+    }
+  ],
+  "intolerancias": []
+}
