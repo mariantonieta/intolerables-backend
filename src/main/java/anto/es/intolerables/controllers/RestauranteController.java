@@ -5,13 +5,13 @@ import anto.es.intolerables.entities.Usuario;
 import anto.es.intolerables.repositories.RestauranteRepository;
 import anto.es.intolerables.services.RestauranteService;
 import anto.es.intolerables.services.UsuarioService;
-import anto.es.intolerables.services.YelpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -20,10 +20,11 @@ import java.util.Optional;
 @RequestMapping("/api/restaurantes")
 
 public class RestauranteController {
-    private final YelpService yelpService;
+
     private final RestauranteRepository restauranteRepository;
     private final RestauranteService restauranteService;
     private final UsuarioService usuarioService;
+
 
     @GetMapping
     public ResponseEntity<List<Restaurante>> listarRestaurantes() {
@@ -33,46 +34,22 @@ public class RestauranteController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+
     @GetMapping("/buscar")
-    public ResponseEntity<?> buscarPorIntolerancia(
+    public ResponseEntity<List<Map<String, String>>> buscarRestaurantes(
             @RequestParam String intolerancia,
-            @RequestParam String ubicacion,
             @RequestParam String comida,
-            Authentication authentication) {
+            @RequestParam String ubicacion) {
 
-        try {
-            if (intolerancia.isBlank()) {
-                return ResponseEntity.badRequest().body("La intolerancia es obligatoria");
-            }
-            String ciudad = null;
-            if (authentication != null) {
-                String username = authentication.getName();
-                Optional<Usuario> usuario = usuarioService.findByNombre(username);
+        List<Map<String, String>> resultado = restauranteService.buscarRestaurantesConIA(intolerancia, comida, ubicacion);
 
-                if (usuario.isPresent()) {
-                    ciudad = usuario.get().getPaisUsuario();
-                }
 
-            }
-            if (ciudad != null) {
-                ubicacion = ciudad;
-            }
-            if (ubicacion == null || ubicacion.isBlank()) {
-                return ResponseEntity.badRequest().body("Ubicación (ciudad) es obligatoria");
-            }
-
-            List<Restaurante> restaurantes = yelpService.buscarPorIntolerancia(intolerancia, ubicacion, comida);
-
-            // Guarda los resultados en la BBDD, evitando duplicados
-            for (Restaurante restaurante : restaurantes) {
-                if (!restauranteRepository.existsByNombreAndDireccion(restaurante.getNombre(), restaurante.getDireccion())) {
-                    restauranteRepository.save(restaurante);
-                }
-            }
-
-            return ResponseEntity.ok(restaurantes);
-
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error al buscar restaurantes: " + e.getMessage());
+        if (resultado.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
-    }}
+
+        return ResponseEntity.ok(resultado);
+    }
+
+    }
