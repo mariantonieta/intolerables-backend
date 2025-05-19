@@ -57,7 +57,8 @@
                                     "/api/intolerancias",
                                     "/api/recetas/buscar",
                                     "/api/restaurantes/buscar",
-                                    "/api/auth/login"
+                                    "/api/auth/login",
+                                    "/api/chat"
 
                             ).permitAll()
                             //privados
@@ -72,7 +73,8 @@
                                     "/api/recetas/buscar",
                                     "/api/restaurantes/buscar",
                                     "api/favoritos-recetas/spoonacular",
-                                    "/api/auth/usuario/"
+                                    "/api/auth/usuario/",
+                                    "/api/chat"
 
 
                                     ).authenticated()
