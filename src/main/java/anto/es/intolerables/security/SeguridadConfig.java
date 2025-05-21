@@ -1,102 +1,93 @@
-    package anto.es.intolerables.security;
+package anto.es.intolerables.security;
 
-    import anto.es.intolerables.security.jwt.JwtAuthEntryPoint;
-    import anto.es.intolerables.security.jwt.JwtAuthFilter;
-    import lombok.RequiredArgsConstructor;
-    import org.springframework.context.annotation.Bean;
-    import org.springframework.context.annotation.Configuration;
-    import org.springframework.core.annotation.Order;
-    import org.springframework.security.authentication.AuthenticationManager;
-    import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-    import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-    import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-    import org.springframework.security.config.http.SessionCreationPolicy;
+import anto.es.intolerables.security.jwt.JwtAuthEntryPoint;
+import anto.es.intolerables.security.jwt.JwtAuthFilter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-    import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-    import org.springframework.security.crypto.password.PasswordEncoder;
-    import org.springframework.security.web.SecurityFilterChain;
-    import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import java.util.List;
 
-    import org.springframework.web.cors.CorsConfiguration;
-    import org.springframework.web.cors.CorsConfigurationSource;
-    import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+@Configuration
+@EnableMethodSecurity
+@RequiredArgsConstructor
+public class SeguridadConfig {
 
-    import java.util.List;
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
+    private final JwtAuthFilter jwtAuthFilter;
 
-
-    @Configuration
-    @EnableMethodSecurity
-    @RequiredArgsConstructor
-    public class SeguridadConfig {
-
-        private final JwtAuthEntryPoint jwtAuthEntryPoint;
-        private final JwtAuthFilter jwtAuthFilter;
-
-        // Para encriptar contraseñas
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-            return new BCryptPasswordEncoder();
-        }
-        @Bean
-        public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-            return config.getAuthenticationManager();
-        }
-
-        @Bean
-        @Order(1)
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-            // Configuración de CORS y Seguridad
-            http
-                    .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                    .csrf(csrf -> csrf.disable())
-                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .authorizeHttpRequests(auth -> auth
-                         //publicos
-                            .requestMatchers(
-                                    "/api/auth/register-api",
-                                    "/api/intolerancias",
-                                    "/api/recetas/buscar",
-                                    "/api/restaurantes/buscar",
-                                    "/api/auth/login",
-                                    "/api/chat"
-
-                            ).permitAll()
-                            //privados
-                            .requestMatchers(
-
-                                    "/api/favoritos-restaurantes",
-                                    "/api/favoritos-recetas",
-                                    "/api/recetas",
-                                    "/api/recetas/todas",
-                                    "/api/intolerancias",
-                                    "/api/intolerancias/seleccionar",
-                                    "/api/recetas/buscar",
-                                    "/api/restaurantes/buscar",
-                                    "api/favoritos-recetas/spoonacular",
-                                    "/api/auth/usuario/",
-                                    "/api/chat"
-
-
-                                    ).authenticated()
-
-                    )
-                    .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntryPoint))
-                    .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
-            return http.build();
-        }
-
-//CORS para el frontend
-        @Bean
-        public CorsConfigurationSource corsConfigurationSource() {
-            CorsConfiguration configuration = new CorsConfiguration();
-            configuration.setAllowedOrigins(List.of("https://intolerables-mariantos-projects.vercel.app"));
-            configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-            configuration.setAllowedHeaders(List.of("*"));
-            configuration.setAllowCredentials(true);
-
-            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-            source.registerCorsConfiguration("/**", configuration);
-            return source;
-        }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    @Order(1)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // 🔓 Permitimos OPTIONS para que CORS no bloquee preflight requests
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // Públicos
+                        .requestMatchers(
+                                "/api/auth/register-api",
+                                "/api/auth/login",
+                                "/api/intolerancias",
+                                "/api/recetas/buscar",
+                                "/api/restaurantes/buscar",
+                                "/api/chat"
+                        ).permitAll()
+
+                        // Privados
+                        .requestMatchers(
+                                "/api/favoritos-restaurantes",
+                                "/api/favoritos-recetas",
+                                "/api/recetas",
+                                "/api/recetas/todas",
+                                "/api/intolerancias/seleccionar",
+                                "api/favoritos-recetas/spoonacular",
+                                "/api/auth/usuario/",
+                                "/api/chat"
+                        ).authenticated()
+                )
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntryPoint))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("https://intolerables-85eeckzg4-mariantos-projects.vercel.app"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+}

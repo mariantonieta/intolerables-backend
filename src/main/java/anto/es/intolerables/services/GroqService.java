@@ -49,11 +49,11 @@ public class GroqService {
                     .get(0)
                     .path("message")
                     .path("content")
-                    .asText("⚠️ No hubo respuesta del modelo");
+                    .asText(" No hubo respuesta del modelo");
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "❌ Error al comunicarse con Groq: " + e.getMessage();
+            return "Error al comunicarse con Groq: " + e.getMessage();
         }
     }
 
@@ -83,8 +83,8 @@ public class GroqService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
             ResponseEntity<String> response = restTemplate.postForEntity(API_URL, entity, String.class);
-            System.out.println("📢 Respuesta bruta de Groq:");
-            System.out.println(response.getBody());
+          //  System.out.println("Respuesta bruta de Groq:")
+            //  System.out.println(response.getBody());
 
             JsonNode root = mapper.readTree(response.getBody());
             String respuestaIA = root.path("choices").get(0).path("message").path("content").asText();
@@ -93,7 +93,7 @@ public class GroqService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return List.of(Map.of("error", "❌ Error al comunicarse con Groq: " + e.getMessage()));
+            return List.of(Map.of("error", "Error al comunicarse con Groq: " + e.getMessage()));
         }
     }
 
