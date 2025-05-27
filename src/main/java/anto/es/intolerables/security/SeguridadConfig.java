@@ -48,10 +48,9 @@ public class SeguridadConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 🔓 Permitimos OPTIONS para que CORS no bloquee preflight requests
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Públicos
+
                         .requestMatchers(
                                 "/api/auth/register-api",
                                 "/api/auth/login",
@@ -60,9 +59,7 @@ public class SeguridadConfig {
                                 "/api/restaurantes/buscar",
                                 "/api/chat"
                         ).permitAll()
-
-                        // Privados
-                        .requestMatchers(
+                 .requestMatchers(
                                 "/api/favoritos-restaurantes",
                                 "/api/favoritos-recetas",
                                 "/api/recetas",
@@ -81,7 +78,10 @@ public class SeguridadConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://intolerables-85eeckzg4-mariantos-projects.vercel.app"));
+        configuration.setAllowedOrigins(List.of("https://intolerables-mariantos-projects.vercel.app/",
+                "https://intolerables-git-main-mariantos-projects.vercel.app/",
+                "https://intolerables-5g7mjrkd9-mariantos-projects.vercel.app/"
+                ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
