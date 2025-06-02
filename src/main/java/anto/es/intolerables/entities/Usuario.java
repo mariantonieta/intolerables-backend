@@ -39,7 +39,9 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     @JsonManagedReference(value = "usuario-intolerancias")
     private List<UsuarioIntolerancia> intolerancias;
-
+    @ManyToOne
+    @JoinColumn(name = "intolerancia_seleccionada_id") // Clave foránea
+    private Intolerancia intoleranciaSeleccionada;
     // Constructor vacío
     public Usuario() {}
 
@@ -54,6 +56,7 @@ public class Usuario {
         this.favoritos = favoritos;
         this.favorito = favorito;
         this.intolerancias = intolerancias;
+        this.intoleranciaSeleccionada = intoleranciaSeleccionada;
     }
 
     // Getters y Setters manuales
@@ -127,5 +130,12 @@ public class Usuario {
 
     public void setIntolerancias(List<UsuarioIntolerancia> intolerancias) {
         this.intolerancias = intolerancias;
+    }
+    public Intolerancia getIntoleranciaSeleccionada() {
+        return intoleranciaSeleccionada;
+    }
+
+    public void setIntoleranciaSeleccionada(Intolerancia intoleranciaSeleccionada) {
+        this.intoleranciaSeleccionada = intoleranciaSeleccionada;
     }
 }

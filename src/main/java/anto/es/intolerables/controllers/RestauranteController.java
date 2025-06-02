@@ -37,7 +37,7 @@ public class RestauranteController {
 
 
     @GetMapping("/buscar")
-    public ResponseEntity<List<Map<String, String>>> buscarRestaurantes(
+    public ResponseEntity<List<Restaurante>> buscarRestaurantes(
             @RequestParam String intolerancia,
             @RequestParam String comida,
             @RequestParam String ubicacion) {
@@ -48,8 +48,11 @@ public class RestauranteController {
         if (resultado.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
+        List<Restaurante> restaurantesGuardados = restauranteService.guardarRestaurantesEnBD(resultado);
 
-        return ResponseEntity.ok(resultado);
+
+        return ResponseEntity.ok(restaurantesGuardados);
     }
+
 
     }

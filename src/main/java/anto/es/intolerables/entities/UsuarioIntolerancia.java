@@ -26,7 +26,10 @@ public class UsuarioIntolerancia {
 
     // Constructor vacío
     public UsuarioIntolerancia() {}
-
+    public UsuarioIntolerancia(Usuario usuario, Intolerancia intolerancia) {
+        this.usuario = usuario;
+        this.intolerancia = intolerancia;
+    }
     // Constructor con atributos
     public UsuarioIntolerancia(Integer id, String numeroIntolerancia, Usuario usuario, Intolerancia intolerancia) {
         this.id = id;

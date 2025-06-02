@@ -46,4 +46,12 @@ public class IntoleranciaController {
             return ResponseEntity.badRequest().body("No se pudo asociar la intolerancia.");
         }
     }
+    @PutMapping("/usuario/{id}/modificar")
+    public ResponseEntity<?> modificarIntoleranciaUsuario(@PathVariable Integer id, @RequestBody Map<String, Integer> body) {
+        Integer nuevaIntoleranciaId = body.get("intoleranciaId");
+
+        return intoleranciaService.actualizarIntoleranciaUsuario(id, nuevaIntoleranciaId)
+                ? ResponseEntity.ok(Map.of("mensaje", "Intolerancia actualizada correctamente"))
+                : ResponseEntity.badRequest().body(Map.of("error", "No se pudo actualizar la intolerancia"));
+    }
 }

@@ -50,7 +50,35 @@ public class IntoleranciaService {
 
             return true;
         }
+
         return false;
+    }
+    public List<Intolerancia> findAllById(List<Integer> ids) {
+        return repositorio.findByIdIn(ids);
+    }
+    @Transactional
+    public boolean actualizarIntoleranciaUsuario(Integer usuarioId, Integer intoleranciaId) {
+        Optional<Usuario> usuarioOpt = usuarioRepo.findById(usuarioId);
+
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+
+            if (intoleranciaId != null) {
+                Optional<Intolerancia> intoleranciaOpt = repositorio.findById(intoleranciaId);
+                if (intoleranciaOpt.isPresent()) {
+                    usuario.setIntoleranciaSeleccionada(intoleranciaOpt.get());
+                } else {
+                    return false; // Intolerancia no encontrada
+                }
+            } else {
+                usuario.setIntoleranciaSeleccionada(null); // Elimina la intolerancia
+            }
+
+            usuarioRepo.save(usuario);
+            return true;
+        }
+
+        return false; // Usuario no encontrado
     }
 
 }

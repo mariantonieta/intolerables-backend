@@ -3,6 +3,8 @@ import anto.es.intolerables.entities.Usuario;
 import anto.es.intolerables.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Optional;
 @Service
 @RequiredArgsConstructor
@@ -14,7 +16,7 @@ public class UsuarioService {
     return repositorio.findByNombre(nombre);
 }
 
-
+@Transactional
     public Optional<Usuario> findById(Integer id) {
         return repositorio.findById(id);
     }

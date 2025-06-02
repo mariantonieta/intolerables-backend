@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -48,39 +49,40 @@ public class SeguridadConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/api/auth/register-api",
                                 "/api/auth/login",
                                 "/api/intolerancias",
                                 "/api/recetas/buscar",
                                 "/api/restaurantes/buscar",
-                                "/api/chat"
+                                "/api/chat",
+                                "/api/nominatim/**"
                         ).permitAll()
-                 .requestMatchers(
-                                "/api/favoritos-restaurantes",
+                        .requestMatchers(
+                                "/api/favoritos-restaurantes/**",
                                 "/api/favoritos-recetas",
                                 "/api/recetas",
                                 "/api/recetas/todas",
                                 "/api/intolerancias/seleccionar",
                                 "api/favoritos-recetas/spoonacular",
-                                "/api/auth/usuario/",
+                                "/api/auth/usuario/**",  // Ahora protegemos toda la ruta de usuario
                                 "/api/chat"
                         ).authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntryPoint))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, BasicAuthenticationFilter.class); // Ajuste en la posición del filtro JWT
 
         return http.build();
-    }
+
+}
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("https://intolerables-mariantos-projects.vercel.app/",
                 "https://intolerables-git-main-mariantos-projects.vercel.app/",
-                "https://intolerables-5g7mjrkd9-mariantos-projects.vercel.app/"
+                "https://intolerables-5g7mjrkd9-mariantos-projects.vercel.app/",
+                "http://localhost:5173/"
                 ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
