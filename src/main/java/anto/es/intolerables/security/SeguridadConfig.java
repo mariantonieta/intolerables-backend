@@ -61,12 +61,12 @@ public class SeguridadConfig {
                         ).permitAll()
                         .requestMatchers(
                                 "/api/favoritos-restaurantes/**",
-                                "/api/favoritos-recetas",
+                                "/api/favoritos-recetas/**",
                                 "/api/recetas",
                                 "/api/recetas/todas",
                                 "/api/intolerancias/seleccionar",
                                 "api/favoritos-recetas/spoonacular",
-                                "/api/auth/usuario/**",  // Ahora protegemos toda la ruta de usuario
+                                "/api/auth/usuario/**",
                                 "/api/chat"
                         ).authenticated()
                 )

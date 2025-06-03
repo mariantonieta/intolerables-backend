@@ -3,6 +3,7 @@ package anto.es.intolerables.security;
 import anto.es.intolerables.entities.Usuario;
 import anto.es.intolerables.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +27,7 @@ public UserDetails loadUserByUsername(String nombre) throws UsernameNotFoundExce
     return User.builder()
             .username(usuario.getNombre())
             .password(usuario.getContrasena())
-            .authorities(Collections.emptyList())
+            .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
             .build();
 }
 }

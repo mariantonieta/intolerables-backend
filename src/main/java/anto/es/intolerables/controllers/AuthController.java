@@ -1,16 +1,15 @@
 package anto.es.intolerables.controllers;
 
 import anto.es.intolerables.dto.UsuarioDTO;
-import anto.es.intolerables.entities.Intolerancia;
 import anto.es.intolerables.entities.Usuario;
 import anto.es.intolerables.entities.UsuarioIntolerancia;
 import anto.es.intolerables.repositories.IntoleranciaRepository;
 import anto.es.intolerables.security.CustomUserDetailsService;
 import anto.es.intolerables.security.jwt.JwtTokenProvider;
-import anto.es.intolerables.services.IntoleranciaService;
+
 import anto.es.intolerables.services.UsuarioService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

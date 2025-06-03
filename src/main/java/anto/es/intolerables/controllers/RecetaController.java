@@ -54,7 +54,20 @@ public class RecetaController {
         return ResponseEntity.ok(recetasTraducidas);
     }
 
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarReceta(@PathVariable Integer id) {
+        try {
+            // Verificar si la receta existe antes de eliminar
+            if (recetaRepository.findById(id).isPresent()) {
+                recetaRepository.deleteById(id);
+                return ResponseEntity.noContent().build(); // Código 204: Eliminación exitosa
+            } else {
+                return ResponseEntity.notFound().build(); // Código 404: No existe la receta
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
+        }
+    }
 
     @PostMapping("/guardar")
     public ResponseEntity<?> guardarRecetaDesdeSpoonacular(@RequestBody Map<String, Object> datosReceta) {

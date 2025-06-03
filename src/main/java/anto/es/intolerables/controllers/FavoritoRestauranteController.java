@@ -48,7 +48,6 @@ public class FavoritoRestauranteController { private final FavoritoRestauranteSe
     @PostMapping
     public ResponseEntity<Map<String, Object>> crearFavorito(@Valid @RequestBody FavoritoRestaurante favorito) {
         try {
-            // Obtener el usuario autenticado desde el SecurityContext
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String nombreUsuario = authentication.getName();
 
@@ -74,8 +73,8 @@ public class FavoritoRestauranteController { private final FavoritoRestauranteSe
         }
     }
 
-
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> eliminarFavorito(@PathVariable Integer id) {
         try {
             if (favoritoRestauranteService.findById(id).isPresent()) {
